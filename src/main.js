@@ -300,15 +300,25 @@ if (isTouchDevice) {
         const touchDuration = Date.now() - touchStartTime;
         const moveDist = Math.abs(previousTouchX - touchStartX) + Math.abs(previousTouchY - touchStartY);
         
-        if (touchDuration < 300 && moveDist < 10) {
+        // Relaxed tap detection thresholds for mobile:
+        // Max 500ms duration, and max 35px movement (prevents failing on slight finger wiggles)
+        if (touchDuration < 500 && moveDist < 35) {
           // Tap detected!
           const tapNDC = new THREE.Vector2();
           tapNDC.x = (touchStartX / window.innerWidth) * 2 - 1;
           tapNDC.y = -(touchStartY / window.innerHeight) * 2 + 1;
           
-          const touchRaycaster = new THREE.Raycaster();
-          touchRaycaster.setFromCamera(tapNDC, camera);
-          const intersects = touchRaycaster.intersectObjects(interactableObjects, true);
+          // 1. Prioridad: ¿La mira central está apuntando a un objeto?
+          const centerRaycaster = new THREE.Raycaster();
+          centerRaycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+          let intersects = centerRaycaster.intersectObjects(interactableObjects, true);
+
+          // 2. Si la mira central no apunta a nada interactivo, verificamos si el usuario tocó un objeto directamente
+          if (intersects.length === 0) {
+            const touchRaycaster = new THREE.Raycaster();
+            touchRaycaster.setFromCamera(tapNDC, camera);
+            intersects = touchRaycaster.intersectObjects(interactableObjects, true);
+          }
 
           if (intersects.length > 0) {
             let targetObj = intersects[0].object;

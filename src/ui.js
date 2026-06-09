@@ -81,6 +81,22 @@ export function initUI() {
       if (centerBtn) centerBtn.style.display = 'none';
     }
   }
+
+  // Set initial global progress
+  updateGlobalProgress();
+}
+
+const completedQuizzes = new Set();
+
+export function updateGlobalProgress() {
+  const text = document.getElementById('global-progress-text');
+  const fill = document.getElementById('global-progress-bar-fill');
+  const totalQuizzes = Object.keys(objectData).length;
+  if (!text || !fill) return;
+
+  const count = completedQuizzes.size;
+  text.textContent = `Progreso: ${count} / ${totalQuizzes} completados`;
+  fill.style.width = `${(count / totalQuizzes) * 100}%`;
 }
 
 const objectData = {
@@ -275,6 +291,14 @@ export function showObjectUI(objectId) {
       });
       if (readyBadge) {
         readyBadge.textContent = `${correctCount}/${data.quiz.length}`;
+      }
+
+      // Update global progress if the user got all answers right
+      if (correctCount === data.quiz.length) {
+        if (!completedQuizzes.has(objectId)) {
+          completedQuizzes.add(objectId);
+          updateGlobalProgress();
+        }
       }
     });
   }

@@ -31,6 +31,15 @@ Nos aseguramos de que el museo no queme la batería ni trabe los celulares:
 ### 5. 🎯 Controles de Centrado de Cámara
 Añadimos un botón en la interfaz y un atajo de teclado (**Tecla C**) que reinicia la inclinación (Pitch) de la cámara. Esto es muy útil, especialmente en celulares, si el usuario termina mirando accidentalmente al techo o al suelo y se pierde.
 
+### 6. ⏳ Pantalla de Carga Personalizada (Loading Screen)
+Implementamos una pantalla de carga interactiva que bloquea el acceso al museo hasta que todos los recursos (modelos, texturas) estén completamente cargados.
+- **Elemento Animado**: Incluimos un "Capybara" giratorio (`capybara_loading.png`) que sirve como indicador visual animado durante la carga.
+- **Transición Suave**: Una vez completada la carga, la pantalla se desvanece suavemente antes de ser removida del DOM, brindando una experiencia pulida.
+
+### 7. 📊 Barra de Progreso en Trivias
+Añadimos un indicador visual en la sección de trivia para mejorar el feedback del usuario.
+- **Seguimiento de Progreso**: La barra muestra cuántas preguntas se han respondido y cuántas faltan para completar el quiz actual, independientemente del orden en que se respondan.
+
 ---
 
 ## 🚀 Instrucciones de Integración

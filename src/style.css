@@ -24,6 +24,50 @@ canvas {
   z-index: 10;
 }
 
+/* Global Progress Bar */
+.global-progress-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(44, 41, 37, 0.9);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 140;
+  color: white;
+  pointer-events: auto;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid rgba(224, 219, 206, 0.2);
+}
+
+#global-progress-text {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.global-progress-bar-bg {
+  width: 100%;
+  height: 12px;
+  background-color: #1a1a1a;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+#global-progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00ff88 0%, #00b3ff 100%);
+  border-radius: 6px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* UI Test Styles */
 #ui-container {
   position: absolute;
@@ -551,4 +595,28 @@ canvas {
   }
 }
 
+/* --- Mobile Tutorial Arrows --- */
+.tutorial-arrow {
+  position: absolute;
+  color: #00ff88;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0,0,0,1);
+  pointer-events: none;
+}
+.tutorial-arrow svg {
+  width: 60px;
+  height: 60px;
+  fill: #00ff88;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,1));
+  margin: 5px;
+}
 
+.arrow-look-left { top: 30%; left: 10%; }
+.arrow-look-right { top: 30%; right: 10%; }
+
+.arrow-move { bottom: 220px; left: 50px; }
+.arrow-center { bottom: 100px; right: 50px; flex-direction: row; }

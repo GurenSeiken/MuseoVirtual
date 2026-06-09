@@ -58,7 +58,32 @@ overlay.style.fontSize = '24px';
 overlay.style.textAlign = 'center';
 overlay.style.cursor = 'pointer';
 overlay.style.zIndex = '100';
-overlay.innerHTML = 'Haz clic o toca para explorar<br><span style="font-size:16px; margin-top:10px; display:block;">(WASD/Joystick para mover, Ratón/Dedo para mirar, C para centrar)</span>';
+overlay.id = 'tutorial-overlay';
+
+if (isTouchDevice) {
+  overlay.innerHTML = `
+    <div style="font-size: 28px; font-weight: bold; margin-bottom: 10px; z-index: 2;">Haz clic o toca para explorar</div>
+    
+    <div class="tutorial-arrow arrow-look-left">
+      <span style="margin-bottom: 10px;">para rotar</span>
+      <svg viewBox="0 0 24 24" style="transform: rotate(-90deg);"><path d="M12 2L22 12H15V22H9V12H2L12 2Z"/></svg>
+    </div>
+    <div class="tutorial-arrow arrow-look-right">
+      <span style="margin-bottom: 10px;">o girar</span>
+      <svg viewBox="0 0 24 24" style="transform: rotate(90deg);"><path d="M12 2L22 12H15V22H9V12H2L12 2Z"/></svg>
+    </div>
+    <div class="tutorial-arrow arrow-move">
+      <span style="margin-bottom: 10px;">para mover</span>
+      <svg viewBox="0 0 24 24" style="transform: rotate(-135deg);"><path d="M12 2L22 12H15V22H9V12H2L12 2Z"/></svg>
+    </div>
+    <div class="tutorial-arrow arrow-center">
+      <span style="margin-bottom: 10px;">para centrar</span>
+      <svg viewBox="0 0 24 24" style="transform: rotate(135deg);"><path d="M12 2L22 12H15V22H9V12H2L12 2Z"/></svg>
+    </div>
+  `;
+} else {
+  overlay.innerHTML = 'Haz clic o toca para explorar<br><span style="font-size:16px; margin-top:10px; display:block;">(WASD para mover, Ratón para mirar, C para centrar)</span>';
+}
 document.body.appendChild(overlay);
 
 // Center camera function
@@ -463,12 +488,26 @@ if (!isTouchDevice) {
 
 // --- 6. & 7. LOAD MUSEUM MODELS ---
 const loadingManager = new THREE.LoadingManager();
+const progressBar = document.getElementById('progress-bar');
+const loadingText = document.getElementById('loading-text');
+const loadingScreen = document.getElementById('loading-screen');
+
 loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
   console.log(`Loading file: ${url}. Loaded ${itemsLoaded} of ${itemsTotal} files.`);
-  // Si deseas una barra de progreso en el DOM, aquí podrías actualizarla
+  const progress = (itemsLoaded / itemsTotal) * 100;
+  if (progressBar) progressBar.style.width = `${progress}%`;
+  if (loadingText) loadingText.innerText = `Cargando Museo... ${Math.round(progress)}%`;
 };
+
 loadingManager.onLoad = () => {
   console.log('All museum models loaded successfully!');
+  if (loadingScreen) {
+    loadingScreen.style.opacity = '0';
+    setTimeout(() => {
+      loadingScreen.style.display = 'none';
+      loadingScreen.style.visibility = 'hidden';
+    }, 500);
+  }
 };
 
 const gltfLoader = new GLTFLoader(loadingManager);

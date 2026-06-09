@@ -8,19 +8,21 @@
 
 ### 1. 🚶‍♂️ Físicas y Colisiones (Caminar sin atravesar paredes)
 Integramos **Cannon-es** para dotar a la cámara de un cuerpo físico real (`cameraBody`).
-- **Paredes y Modelos Complejos**: Implementamos `Trimesh` de doble cara para la geometría de las paredes. Esto resolvió el problema en el que la cámara atravesaba las paredes si las normales del modelo 3D (desde Blender) estaban invertidas.
+- **Paredes y Modelos Complejos**: Implementamos `Trimesh` de doble cara para la geometría de las paredes. Esto resolvió el problema en el que la cámara atravesaba las paredes si las normales estaban invertidas, además de corregir un error de exclusión de mallas que impedía la generación de colisiones en la estructura principal del escenario.
 - **Movimiento Basado en Velocidad**: Cambiamos la lógica para que las teclas (WASD) y el Joystick no muevan la cámara directamente, sino que apliquen una *velocidad* al cuerpo físico, permitiendo que el motor de físicas resuelva los choques antes de mover la vista.
 
 ### 2. 📱 Optimización Profunda para Dispositivos Móviles
 Nos aseguramos de que el museo no queme la batería ni trabe los celulares:
 - **Colisiones Simplificadas**: En celulares, reemplazamos el pesado `Trimesh` de las paredes por cajas delimitadoras (`BoundingBox`), lo que aumenta enormemente los FPS.
 - **Gráficos Adaptativos**: En pantallas táctiles desactivamos las sombras complejas (`shadowMap`), desactivamos el `OutlinePass` (que consume mucho GPU) y limitamos el `PixelRatio`.
+- **Interacción Táctil Inteligente**: Aumentamos la tolerancia al arrastre en los toques de pantalla para no perder la interacción al temblar el dedo. Además, el sistema da prioridad absoluta al objeto apuntado por la **mira central**, permitiendo abrirlo tocando en cualquier parte de la pantalla, pero conservando el toque directo como opción secundaria.
+- **UI Responsiva**: Mejoramos los espaciados (padding) y aplicamos flex-column en el componente de las tarjetas de información para evitar la superposición entre el título de las obras y el botón de "Cerrar" en pantallas angostas.
 - **Controles Táctiles Nativos**: Implementamos un **Joystick** virtual en la zona inferior izquierda para caminar, y habilitamos **Touch Look** (arrastrar el dedo en cualquier parte libre de la pantalla) para mirar libremente.
 
 ### 3. 🔦 Iluminación Realista y Post-Procesamiento
 - **Corrección de Emisivos**: Limitamos la intensidad del brillo de los materiales para que los techos brillen con fuerza (1.2), pero los demás objetos no sobreexpongan la escena.
-- **Efectos Avanzados (Solo PC)**: Añadimos `SSAOPass` para sombras de contacto realistas en las esquinas y un `OutputPass` con mapeo de tonos `ACESFilmic` para que los colores se vean cinematográficos.
-- **Soporte para Lightmaps**: Implementamos un sistema que carga texturas `HDR` bakeadas y las asigna como mapas de luz al segundo canal UV de la geometría.
+- **Efectos Avanzados**: Añadimos un `OutputPass` con mapeo de tonos `ACESFilmic` para que los colores se vean cinematográficos. (Nota: Se eliminó el `SSAOPass` para maximizar los FPS).
+- **Lightmaps y Sombras Inteligentes**: Implementamos un sistema que carga texturas `HDR` bakeadas y las asigna como mapas de luz. Para optimizar el rendimiento de la tarjeta gráfica, **desactivamos las sombras dinámicas** para todos los objetos que ya cuentan con iluminación pre-horneada.
 
 ### 4. 🖱️ Interacción con Objetos y Estilo Visual
 - **Outline Verde Resplandeciente**: Ajustamos el `OutlinePass` para que, al pasar el ratón o mirar un objeto interactivo (Balsa, Espada, Mano, Urna, Mural), este se resalte con un **borde verde neón brillante** y un pulso constante.

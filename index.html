@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Web Museo - Realistic Lighting</title>
+  </head>
+  <body>
+    <!-- UI Container for testing Sidebar -->
+    <div id="ui-container">
+      <button id="open-sidebar-btn" class="open-sidebar-btn">☰ Menú</button>
+      <aside id="sidebar">
+        <div class="sidebar-header">
+          <h2>Workshops</h2>
+          <button id="close-sidebar-btn" class="close-sidebar-btn">✕</button>
+        </div>
+        <ul class="sidebar-menu">
+          <li><button data-target="cultural-diversity">01 Cultural Diversity</button></li>
+          <li><button data-target="roots-faces">02 Roots & Faces</button></li>
+          <li><button data-target="muisca-raft">03 Muisca Raft</button></li>
+        </ul>
+      </aside>
+      <main id="content-area" class="hidden">
+        <div class="content-panel">
+          <button id="close-content">Cerrar Componente</button>
+          <div id="component-root"></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Container for specific object interaction UI (like Muisca Raft) -->
+    <div id="object-ui-container" class="hidden">
+      <!-- Content injected by ui.js -->
+    </div>
+
+    <div id="joystick-zone" class="hidden"></div>
+    <div id="center-camera-btn" class="hidden" title="Centrar cámara (C)">
+      🎯
+    </div>
+    <div id="crosshair"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

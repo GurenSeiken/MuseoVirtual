@@ -505,9 +505,15 @@ canvas {
   }
 
   .trivia-left {
-    padding: 20px;
+    padding: 60px 20px 20px 20px;
     border-right: none;
     border-bottom: 1px solid #e0dbce;
+  }
+
+  .trivia-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 
   .trivia-right {

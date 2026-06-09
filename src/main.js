@@ -487,8 +487,17 @@ function processModel(model) {
   // 1. Enable shadows for everything in the museum, fix emissives, and apply Lightmaps
   model.traverse((child) => {
     if (child.isMesh) {
-      child.castShadow = true;
-      child.receiveShadow = true;
+      const baseName = child.name.replace(/ /g, '.').replace(/_/g, '.');
+      const hasBakedLightmap = validLightmaps.includes(baseName);
+      
+      // Si el objeto tiene luz horneada (Lightmap), apagar las sombras dinámicas
+      if (hasBakedLightmap) {
+        child.castShadow = false;
+        child.receiveShadow = false;
+      } else {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
       
       // Controlar materiales emisivos para que no sobreexpongan la escena
       if (child.material) {
@@ -530,8 +539,22 @@ function processModel(model) {
 
       // --- COLISIONES ---
       const nameLower = child.name.toLowerCase();
+      
+      let isParedes = false;
+      let current = child;
+      while (current) {
+        if (current.name.toLowerCase().includes('paredes')) {
+          isParedes = true;
+          break;
+        }
+        current = current.parent;
+      }
+
       // Excluir elementos que no necesitan colisiones (como luces, planos invisibles o techos)
-      if (!nameLower.includes('luz') && !nameLower.includes('light') && !nameLower.includes('plane') && !nameLower.includes('techo') && !nameLower.includes('scratch.protection')) {
+      // Si el objeto es parte de 'Paredes', no lo excluimos aunque su mesh se llame 'Plane'
+      const isPlane = nameLower.includes('plane') && !isParedes;
+      
+      if (!nameLower.includes('luz') && !nameLower.includes('light') && !isPlane && !nameLower.includes('techo') && !nameLower.includes('scratch.protection')) {
         child.updateWorldMatrix(true, false);
         const clonedGeometry = child.geometry.clone();
         clonedGeometry.applyMatrix4(child.matrixWorld);
@@ -557,7 +580,7 @@ function processModel(model) {
         indices = doubleIndices;
         
         // Paredes usan Trimesh para respetar huecos de puertas y geometría exacta
-        const needsTrimesh = nameLower.includes('paredes');
+        const needsTrimesh = isParedes;
         
         if (isTouchDevice && !needsTrimesh) {
           // Simplificar colisiones en celular: usar cajas (bounding boxes) en vez de trimesh poligonal
@@ -636,7 +659,7 @@ function processModel(model) {
       }
 
       // Normalizar nombre del mesh (Blender exporta espacios/guiones bajos a veces diferente)
-      const baseName = child.name.replace(/ /g, '.').replace(/_/g, '.');
+      // ya declarado arriba: const baseName = child.name.replace(/ /g, '.').replace(/_/g, '.');
       
       if (!isTouchDevice && validLightmaps.includes(baseName)) {
         rgbeLoader.load(`./models/lightmap/${baseName}_baked.hdr`, (texture) => {
@@ -725,12 +748,12 @@ if (!isTouchDevice) {
   composer = new EffectComposer(renderer);
   composer.addPass(renderScene);
 
-  // SSAO (Screen Space Ambient Occlusion) para sombras de contacto realistas
-  ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-  ssaoPass.kernelRadius = 4; // Reducido para sombras más sutiles
-  ssaoPass.minDistance = 0.005;
-  ssaoPass.maxDistance = 0.05; // Menor distancia de oscuridad
-  composer.addPass(ssaoPass);
+  // SSAO (Screen Space Ambient Occlusion) DESACTIVADO para mejorar FPS drásticamente
+  // ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+  // ssaoPass.kernelRadius = 4;
+  // ssaoPass.minDistance = 0.005;
+  // ssaoPass.maxDistance = 0.05;
+  // composer.addPass(ssaoPass);
 
   outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
   outlinePass.edgeStrength = 6;
